@@ -30,7 +30,7 @@ var opts = require('./lib/tav.js').set({
 	},
 	port: {
 		note: 'Specify port to listen on. (default 8080)',
-		value: 8080,
+		value: 5000,
 	},
 	'no-version-check': {
 		note: 'Attempt to run '+projectName+' without the startup version check.',
