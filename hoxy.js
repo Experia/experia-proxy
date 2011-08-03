@@ -32,10 +32,6 @@ var opts = require('./lib/tav.js').set({
 		note: 'Specify port to listen on. (default 8080)',
 		value: 8080,
 	},
-	stage: {
-		note: 'Host that '+projectName+' will act as a staging server for.',
-		value: false,
-	},
 	'no-version-check': {
 		note: 'Attempt to run '+projectName+' without the startup version check.',
 		value: false,
@@ -52,15 +48,13 @@ var RDB   = require('./lib/rules-db.js');
 var proxyPort = opts.port || 8080;
 var debug = opts.debug;
 
+var stage = '';
+
 if (opts.args.length && parseInt(opts.args[0])) {
 	console.error('!!! old: please use --port=something to specify port. thank you. exiting.');
 	process.exit(1);
 }
 
-if (opts.stage && !(/^[a-z0-9-]+(\.[a-z0-9-]+)*(:\d+)?$/i).test(opts.stage)) {
-	console.error('error: stage must be of the form <hostname> or <hostname>:<port> exiting.');
-	process.exit(1);
-}
 
 // done
 // #############################################################################
@@ -136,10 +130,26 @@ var stripRqHdrs = [
 
 HTTP.createServer(function(request, response) {
 
-	if (/^\//.test(request.url) && opts.stage){
-		request.url = 'http://'+opts.stage+request.url;
-		request.headers.host = opts.stage;
-	}
+	  console.log("----------------------------------");
+   	console.log(request.headers);
+		console.log(request.url);
+		
+		var url_parts = URL.parse(request.url, true);
+		stage = url_parts.query.uri;
+		
+		
+		console.log(stage);
+		
+		if(stage == undefined){
+			uri_parse = URL.parse(request.headers.referer, true).query.uri;
+			console.log(uri_parse);
+			stage = URL.parse('http://' + uri_parse, true).host;
+			console.log(stage);
+		}
+		request.url = 'http://'+ stage + request.url ;
+		console.log(request.url);
+		request.headers.host = stage;
+	
 
 	// strip out certain request headers
 	stripRqHdrs.forEach(function(name){
