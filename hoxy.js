@@ -130,25 +130,26 @@ var stripRqHdrs = [
 
 HTTP.createServer(function(request, response) {
 
-	  console.log("----------------------------------");
-   	console.log(request.headers);
-		console.log(request.url);
 		
-		var url_parts = URL.parse(request.url, true);
-		stage = url_parts.query.uri;
-		
-		
-		console.log(stage);
-		
-		if(stage == undefined){
-			uri_parse = URL.parse(request.headers.referer, true).query.uri;
-			console.log(uri_parse);
-			stage = URL.parse('http://' + uri_parse, true).host;
-			console.log(stage);
-		}
-		request.url = 'http://'+ stage + request.url ;
-		console.log(request.url);
-		request.headers.host = stage;
+	var url_parts = URL.parse(request.url, true);
+	stage = url_parts.query.uri;
+	console.log(stage);
+  stage = decodeURIComponent(stage);
+
+	
+	if(stage.slice(-1) == '/'){
+		stage = stage.substring(0, stage.length-1);
+	}
+		console.log(stage);	
+	
+	if(stage == undefined){
+		uri_parse = URL.parse(request.headers.referer, true).query.uri;
+		stage = URL.parse('http://' + uri_parse, true).host;
+	}
+	
+	request.url = 'http://'+ stage + request.url ;
+	
+	request.headers.host = stage;
 	
 
 	// strip out certain request headers
