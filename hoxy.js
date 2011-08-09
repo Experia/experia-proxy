@@ -131,14 +131,27 @@ var stripRqHdrs = [
 HTTP.createServer(function(request, response) {
 
 	console.log(request.url);
+	
+	
 	var url_parts = URL.parse(request.url, true);
 	stage = url_parts.query.uri;
-
+	
+	console.log(stage);
 	
 	if(stage == undefined){
-		uri_parse = URL.parse(request.headers.referer, true).query.uri;
+		referer = request.headers.referer
+		if (!referer.match('^https?://')) {
+	    referer = 'http://' + referer;
+		}
+		console.log(referer);
+		
+		uri_parse = URL.parse(referer, true).query.uri;
+		if (!uri_parse.match('^https?://')) {
+	    uri_parse = 'http://' + uri_parse;
+		}
 		stage = URL.parse(uri_parse, true).host;
 	}
+		console.log(stage);
 	
 	// Verify if stage has http://
 	if (!stage.match('^https?://')) {
