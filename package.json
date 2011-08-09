@@ -1,7 +1,7 @@
 {
   "name": "hoxy",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "dependencies": {
-    "express": "2.4.3"
+    "connect": "1.6.1"
   }
 }
