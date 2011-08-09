@@ -8,3 +8,4 @@ request: if $ext eq "js" or $ext eq "png" or $ext eq "css" or $ext eq "jpg" or $
 
 response: if $content-type contains 'html', @banner("#funcionaNoiPad")
 response: if $status eq 301 or  $status eq 302 and $response-headers['no-redirect'] empty , @redirect
+response: @throttle(1000, chunkSizeInBytes=1024)
