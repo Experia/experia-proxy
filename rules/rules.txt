@@ -1,11 +1,12 @@
-# THIS IS AN EXAMPLE FILE THAT CONTAINS EXAMPLE RULES FOR HOXY.
-# UNCOMMENT TO ACTIVATE. SEE readme.markdown IN THIS DIR FOR SYNTAX HELP.
+request: $request-headers['user-agent'].set-to("Mozilla/5.0 (iPad; U; CPU OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5")
 
+request: if $url contains '__utm.gif', @send-404()
+response: if $url contains '__utm.gif', @send-404()
 
-request: $request-headers['user-agent'].set-to("	Mozilla/5.0 (iPad; U; CPU OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5")
-request: if $ext eq "js" or $ext eq "png" or $ext eq "css" or $ext eq "jpg" or $ext eq "bmp" , @redirect-origin-url()
+request: if $ext eq "js" or $ext contains "png" or $ext eq "css" or $ext eq "jpg" or $ext eq "gif" and $url not contains '__utm.gif' , @redirect-origin-url()
+response: if $ext eq "js" or $ext contains "png" or $ext eq "css" or $ext eq "jpg" or $ext eq "gif" and $url not contains '__utm.gif', @redirect-origin-url()
+
 
 
 response: if $content-type contains 'html', @banner("#funcionaNoiPad")
 response: if $status eq 301 or  $status eq 302 and $response-headers['no-redirect'] empty , @redirect
-response: @throttle(1000, 1024)

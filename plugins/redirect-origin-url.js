@@ -12,17 +12,21 @@ usage: @external-redirect(url)
 
 exports.run = function(api) {
 	var reqInf = api.getRequestInfo();
+	console.log(reqInf);
+	var sess = reqInf.session;
+	stage = sess.proxy_url;
 	
-	console.log(reqInf.url);
-	console.log(reqInf.hostname);
+	console.log("STAGE: " + stage);
+	console.log("REDIRECT: " + reqInf.url);
+	console.log("REDIRECT: " + reqInf.hostname);
 	
 	url = "http://" + reqInf.hostname + reqInf.url;
 	var qi = api.getRequestInfo();
 	var si = api.getResponseInfo();
-	console.log(url);
+	console.log("REDIRECT: " + url);
 	
 	api.setResponseInfo({
-		statusCode: 302,
+		statusCode: 301,
 		body: [],
 		headers: {
 			'no-redirect': true,

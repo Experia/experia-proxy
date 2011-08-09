@@ -44,6 +44,7 @@ var HTS   = require('./lib/http-transaction-state.js');
 var Q     = require('./lib/asynch-queue.js');
 var RULES = require('./lib/rules.js');
 var RDB   = require('./lib/rules-db.js');
+var connect = require('connect');
 
 var proxyPort = opts.port || 8080;
 var debug = opts.debug;
@@ -128,30 +129,44 @@ var stripRqHdrs = [
 	'proxy-authorization',
 ];
 
-HTTP.createServer(function(request, response) {
-
-	console.log(request.url);
+connect(
+	connect.cookieParser(),
+	connect.session({ secret: 'keyboard cat', cookie: { maxAge: 3600000 }}),
+	function(request, response) {
 	
-	
+	var sess = request.session;
 	var url_parts = URL.parse(request.url, true);
-	stage = url_parts.query.uri;
+	var stage = url_parts.query.uri;
 	
-	console.log(stage);
+	console.log("STAGE: " + stage);
+	console.log("SESSION: " + sess.proxy_url);
 	
 	if(stage == undefined){
-		referer = request.headers.referer
-		if (!referer.match('^https?://')) {
-	    referer = 'http://' + referer;
-		}
-		console.log(referer);
+		stage = sess.proxy_url;
 		
-		uri_parse = URL.parse(referer, true).query.uri;
-		if (!uri_parse.match('^https?://')) {
-	    uri_parse = 'http://' + uri_parse;
+		if(stage == undefined){
+			referer = request.headers.referer
+			if (!referer.match('^https?://')) {
+	  	  referer = 'http://' + referer;
+			}
+			
+			uri_parse = URL.parse(referer, true).query.uri;
+			if (!uri_parse.match('^https?://')) {
+	  	  uri_parse = 'http://' + uri_parse;
+			}
+			
+			stage = URL.parse(uri_parse, true).host;
 		}
-		stage = URL.parse(uri_parse, true).host;
+	}else{
+		if (!stage.match('^https?://')) {
+	    stage = 'http://' + stage;
+		}
+		stage = URL.parse(stage, true).host ;
+		sess.proxy_url = 'http://' + stage;
 	}
-		console.log(stage);
+	
+	console.log("SESSION: " + sess.proxy_url);
+	
 	
 	// Verify if stage has http://
 	if (!stage.match('^https?://')) {
