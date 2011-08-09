@@ -133,15 +133,11 @@ HTTP.createServer(function(request, response) {
 	console.log(request.url);
 	var url_parts = URL.parse(request.url, true);
 	stage = url_parts.query.uri;
+
 	
 	if(stage == undefined){
 		uri_parse = URL.parse(request.headers.referer, true).query.uri;
 		stage = URL.parse(uri_parse, true).host;
-	}
-	
-	// Remove slash in the end
-	if(stage.slice(-1) == '/'){
-		stage = stage.substring(0, stage.length-1);
 	}
 	
 	// Verify if stage has http://
@@ -149,9 +145,22 @@ HTTP.createServer(function(request, response) {
     stage = 'http://' + stage;
 	}
 	
+	console.log(stage);
+	
+	// Remove slash in the end
+	if(stage.slice(-1) == '/'){
+		stage = stage.substring(0, stage.length-1);
+	}
+
+	
+	console.log(stage);
+	
 	request.url =  stage + request.url;
 
 	request.headers.host = URL.parse(stage).host;
+	
+	console.log("Final Request: " + request.url);
+	console.log(request.headers.host);
 	
 
 	// strip out certain request headers

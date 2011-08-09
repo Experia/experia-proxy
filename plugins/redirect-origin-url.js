@@ -11,22 +11,22 @@ usage: @external-redirect(url)
 */
 
 exports.run = function(api) {
-
-	console.log(api);
 	var reqInf = api.getRequestInfo();
 	
 	console.log(reqInf.url);
 	console.log(reqInf.hostname);
 	
 	url = "http://" + reqInf.hostname + reqInf.url;
-	
+	var qi = api.getRequestInfo();
+	var si = api.getResponseInfo();
 	console.log(url);
 	
 	api.setResponseInfo({
 		statusCode: 302,
 		body: [],
 		headers: {
-			location: url,
+			'no-redirect': true,
+			location: url
 		}
 	});
 	api.notify();

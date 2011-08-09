@@ -4,10 +4,8 @@
 # add a visible banner alerting user of proxy
 #response: if $content-type contains 'html', @banner("currently browsing through a web hacking proxy")
 
-request: if $ext eq "js" or $ext eq "png" or $ext eq "css" or $ext eq "jpg" or $ext eq "bmp" , @redirect-origin-url()
-
-
-
-
-response: if $status eq 301 , @redirect
+#request: if $ext eq "js" or $ext eq "png" or $ext eq "css" or $ext eq "jpg" or $ext eq "bmp" , @redirect-origin-url()
 request: $request-headers['user-agent'].set-to("	Mozilla/5.0 (iPad; U; CPU OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5")
+
+response: if $status eq 301 or  $status eq 302 and $response-headers['no-redirect'] empty , @redirect
+response: @jquery('public/remove-flash.js')
