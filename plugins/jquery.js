@@ -56,6 +56,8 @@ jQueryCode = FS.readFileSync(jQueryCode,'utf8');
 function getScriptFromPath(path){
 	if (!scriptCache[path]){
 		var code = FS.readFileSync(path, 'utf8');
+		console.log('PATH');
+		console.log(code);
 		scriptCache[path] = VM.createScript(jQueryCode+'\n\n\n'+code);
 	}
 	return scriptCache[path];
@@ -78,11 +80,17 @@ exports.run = function(api){
 	var reqInf = api.getRequestInfo();
 	var respInf = api.getResponseInfo();
 	var ct = respInf.headers['content-type'];
+			console.log(ct);
 	if (ct && ct.indexOf('html')>-1) {
 		var html = api.getResponseBody();
+
+
 		try{
+			
 			var path = api.arg(0);
+			console.log(path);
 			path = PATH.resolve('.',path);
+			console.log(path);
 			var scriptObj = getScriptFromPath(path);
 		}catch(err){
 			try{
@@ -92,9 +100,12 @@ exports.run = function(api){
 				throw err;
 			}
 		}
+		
+		console.log(scriptObj);
 		try{
 			var window = JSDOM.html(html).createWindow();
 			scriptObj.runInNewContext(window);
+					
 			var dt = html.match(doctypePatt);
 			dt = dt ? dt[1]+'\r\n' : '';
 			var newHTML = dt + window.document.outerHTML;

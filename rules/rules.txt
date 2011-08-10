@@ -7,6 +7,5 @@ request: if $ext eq "js" or $ext contains "png" or $ext eq "css" or $ext eq "jpg
 response: if $ext eq "js" or $ext contains "png" or $ext eq "css" or $ext eq "jpg" or $ext eq "gif" and $url not contains '__utm.gif', @redirect-origin-url()
 
 
-
-response: if $content-type contains 'html', @banner("#funcionaNoiPad")
+response:  @jquery('lib/remove-flash.js')
 response: if $status eq 301 or  $status eq 302 and $response-headers['no-redirect'] empty , @redirect

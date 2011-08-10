@@ -14,14 +14,12 @@ exports.run = function(api) {
 	var respInf = api.getResponseInfo();
 	var reqInf = api.getRequestInfo();
 	
-	console.log("REDIRECT");
 	
 	var url = respInf['headers']['location'];
 	
 	var url_parts = require('url').parse(url, true);
 	
 	url =  url_parts.protocol + "//" + url_parts.host + url_parts.pathname;
-	console.log(url);
 	
 	api.setResponseInfo({
 		statusCode: 302,
