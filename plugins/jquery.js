@@ -65,6 +65,7 @@ function getScriptFromPath(path){
 function getScriptFromEval(code){
 	if (!scriptCache[code]){
 		scriptCache[code] = VM.createScript(jQueryCode+'\n\n\n'+code);
+		console.log(code);
 	}
 	return scriptCache[code];
 };
