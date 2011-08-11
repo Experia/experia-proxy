@@ -2,6 +2,7 @@
   "name": "hoxy",
   "version": "0.1.0",
   "dependencies": {
-    "connect": "1.6.1"
+    "connect": "1.6.1",
+		"jsdom": "0.2.3"
   }
 }
